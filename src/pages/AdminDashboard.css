@@ -1,0 +1,106 @@
+.admin-dashboard {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 35px 30px;
+}
+
+.admin-header {
+  margin-bottom: 30px;
+}
+
+.admin-header h1 {
+  margin: 0 0 8px;
+  font-size: 32px;
+}
+
+.admin-header p {
+  margin: 0;
+  color: #666;
+  font-size: 16px;
+}
+
+.admin-welcome {
+  padding: 25px;
+  margin-bottom: 30px;
+  border-radius: 12px;
+  background: #f5f5f5;
+}
+
+.admin-welcome h2 {
+  margin: 0 0 8px;
+}
+
+.admin-welcome p {
+  margin: 0;
+  color: #666;
+}
+
+.admin-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 25px;
+}
+
+.admin-card {
+  position: relative;
+  display: block;
+  padding: 25px;
+  min-height: 180px;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  background: white;
+  color: #222;
+  text-decoration: none;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+  box-sizing: border-box;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.admin-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 7px 18px rgba(0, 0, 0, 0.12);
+}
+
+.admin-card-icon {
+  font-size: 42px;
+  margin-bottom: 18px;
+}
+
+.admin-card h3 {
+  margin: 0 0 8px;
+  font-size: 19px;
+}
+
+.admin-card p {
+  margin: 0;
+  color: #666;
+  line-height: 1.5;
+}
+
+.card-arrow {
+  position: absolute;
+  right: 22px;
+  bottom: 20px;
+  font-size: 22px;
+  font-weight: bold;
+}
+
+@media (max-width: 900px) {
+  .admin-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .admin-dashboard {
+    padding: 25px 15px;
+  }
+
+  .admin-header h1 {
+    font-size: 27px;
+  }
+
+  .admin-cards {
+    grid-template-columns: 1fr;
+  }
+}
