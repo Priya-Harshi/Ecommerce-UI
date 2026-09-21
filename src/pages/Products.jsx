@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "./Products.css";
 
 const API_URL = "https://localhost:7042/api/Product";
@@ -13,6 +13,8 @@ function Products() {
     const savedCart = localStorage.getItem("cart");
     return savedCart ? JSON.parse(savedCart) : [];
   });
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchProducts();
@@ -83,6 +85,10 @@ function Products() {
       product.description.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
+  const openProductDetails = (productId) => {
+    navigate(`/product/${productId}`);
+  };
+
   return (
     <div className="products-page">
       <div className="products-header">
@@ -111,8 +117,24 @@ function Products() {
 
       <div className="product-grid">
         {filteredProducts.map((product) => (
-          <div className="product-card" key={product.id}>
-            <div className="product-icon">🛍️</div>
+          <div
+            className="product-card"
+            key={product.id}
+            onClick={() => openProductDetails(product.id)}
+          >
+            <div className="product-icon">
+              {product.imageUrl ? (
+                <img
+                  src={product.imageUrl}
+                  alt={product.name}
+                  onError={(e) => {
+                    e.currentTarget.style.display = "none";
+                  }}
+                />
+              ) : (
+                "🛍️"
+              )}
+            </div>
 
             <div className="product-content">
               <h2>{product.name}</h2>
@@ -134,7 +156,10 @@ function Products() {
               <button
                 className="add-cart-button"
                 disabled={!product.isActive || product.stockQuantity <= 0}
-                onClick={() => addToCart(product)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  addToCart(product);
+                }}
               >
                 {product.stockQuantity > 0 && product.isActive
                   ? "Add to Cart"

@@ -323,3 +323,30 @@
     grid-template-columns: 1fr;
   }
 }
+.admin-product-icon {
+  overflow: hidden;
+}
+
+.admin-product-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.image-preview {
+  margin-top: 15px;
+}
+
+.image-preview label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.image-preview img {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+}

@@ -12,6 +12,7 @@ function AdminProducts() {
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
   const [stockQuantity, setStockQuantity] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
 
   useEffect(() => {
     fetchProducts();
@@ -56,6 +57,7 @@ function AdminProducts() {
           price: Number(price),
           stockQuantity: Number(stockQuantity),
           isActive: true,
+          imageUrl: imageUrl,
         }),
       });
 
@@ -89,6 +91,7 @@ function AdminProducts() {
           price: Number(price),
           stockQuantity: Number(stockQuantity),
           isActive: true,
+          imageUrl: imageUrl,
         }),
       });
 
@@ -137,6 +140,7 @@ function AdminProducts() {
     setDescription("");
     setPrice("");
     setStockQuantity("");
+    setImageUrl("");
   };
 
   const startEditing = (product) => {
@@ -145,6 +149,7 @@ function AdminProducts() {
     setDescription(product.description);
     setPrice(product.price);
     setStockQuantity(product.stockQuantity);
+    setImageUrl(product.imageUrl || "");
 
     window.scrollTo({
       top: 0,
@@ -219,17 +224,44 @@ function AdminProducts() {
             />
           </div>
 
-          <div className="form-field">
-            <label>Stock Quantity</label>
+          <div className="form-row">
+            <div className="form-field">
+              <label>Stock Quantity</label>
 
-            <input
-              type="number"
-              placeholder="Enter stock quantity"
-              value={stockQuantity}
-              onChange={(e) => setStockQuantity(e.target.value)}
-              required
-            />
+              <input
+                type="number"
+                placeholder="Enter stock quantity"
+                value={stockQuantity}
+                onChange={(e) => setStockQuantity(e.target.value)}
+                required
+              />
+            </div>
+
+            <div className="form-field">
+              <label>Image URL</label>
+
+              <input
+                type="text"
+                placeholder="Enter image URL"
+                value={imageUrl}
+                onChange={(e) => setImageUrl(e.target.value)}
+              />
+            </div>
           </div>
+
+          {imageUrl && (
+            <div className="image-preview">
+              <label>Image Preview</label>
+
+              <img
+                src={imageUrl}
+                alt="Product preview"
+                onError={(e) => {
+                  e.target.style.display = "none";
+                }}
+              />
+            </div>
+          )}
 
           <div className="form-actions">
             <button type="submit" className="primary-button">
@@ -260,14 +292,30 @@ function AdminProducts() {
         {products.length === 0 ? (
           <div className="no-products">
             <div>📦</div>
+
             <h3>No Products Found</h3>
+
             <p>Add your first product using the form above.</p>
           </div>
         ) : (
           <div className="admin-product-grid">
             {products.map((product) => (
               <div className="admin-product-card" key={product.id}>
-                <div className="admin-product-icon">📦</div>
+                <div className="admin-product-icon">
+                  {product.imageUrl ? (
+                    <img
+                      src={product.imageUrl}
+                      alt={product.name}
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                      }}
+                    />
+                  ) : (
+                    "📦"
+                  )}
+                </div>
 
                 <div className="admin-product-content">
                   <div className="product-title-row">

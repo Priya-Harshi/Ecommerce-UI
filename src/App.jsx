@@ -18,6 +18,7 @@ import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
 import Navbar from "./pages/Navbar";
 import Payment from "./pages/Payment";
+import ProductDetails from "./pages/ProductDetails";
 
 function ProtectedLayout() {
   const token = localStorage.getItem("token");
@@ -54,6 +55,9 @@ function App() {
           <Route path="/admin/products" element={<AdminProducts />} />
           <Route path="/admin/bulk-upload" element={<BulkUpload />} />
           <Route path="/admin/inventory" element={<Inventory />} />
+
+          {/* Product details */}
+          <Route path="/product/:id" element={<ProductDetails />} />
         </Route>
       </Routes>
     </BrowserRouter>
