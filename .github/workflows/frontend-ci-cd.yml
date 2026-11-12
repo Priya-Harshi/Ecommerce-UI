@@ -63,9 +63,16 @@ jobs:
   deploy-frontend-k8s:
     runs-on: ubuntu-latest
     needs: build-image
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && secrets.KUBE_CONFIG_DATA != ''
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     steps:
       - uses: actions/checkout@v4
+
+      - name: Validate kubeconfig secret exists
+        run: |
+          if [ -z "${{ secrets.KUBE_CONFIG_DATA }}" ]; then
+            echo "KUBE_CONFIG_DATA secret is missing."
+            exit 1
+          fi
 
       - name: Setup kubectl
         uses: azure/setup-kubectl@v4
