@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import "./MyOrders.css";
 
-const API_URL = "https://localhost:7042/api/Order";
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://localhost:7000";
+const API_URL = `${BASE_URL}/api/Order`;
 
 function MyOrders() {
   const [orders, setOrders] = useState([]);
@@ -29,7 +30,6 @@ function MyOrders() {
       }
 
       const data = await response.json();
-
       setOrders(data);
     } catch (error) {
       setMessage(error.message);
@@ -58,9 +58,7 @@ function MyOrders() {
       {orders.length === 0 && !message ? (
         <div className="empty-orders">
           <div className="empty-orders-icon">📦</div>
-
           <h2>No orders found</h2>
-
           <p>You haven't placed any orders yet.</p>
         </div>
       ) : (
@@ -70,9 +68,8 @@ function MyOrders() {
               <div className="order-card-header">
                 <div>
                   <h2>Order #{order.id}</h2>
-
                   <p className="order-date">
-                    Placed on {formatDate(order.craetedAt)}
+                    Placed on {formatDate(order.createdAt)}
                   </p>
                 </div>
 
@@ -86,18 +83,14 @@ function MyOrders() {
               <div className="order-items">
                 <h3>Order Items</h3>
 
-                {order.orderItems.map((item) => (
-                  <div className="order-item" key={item.id}>
+                {order.items.map((item, index) => (
+                  <div className="order-item" key={index}>
                     <div className="order-item-icon">🛍️</div>
-
                     <div className="order-item-details">
                       <h4>Product #{item.productId}</h4>
-
                       <p>Quantity: {item.quantity}</p>
-
                       <p>Unit Price: ₹{item.unitPrice}</p>
                     </div>
-
                     <div className="order-item-total">
                       ₹{item.unitPrice * item.quantity}
                     </div>
@@ -107,7 +100,6 @@ function MyOrders() {
 
               <div className="order-card-footer">
                 <span>Total Amount</span>
-
                 <strong>₹{order.totalAmount}</strong>
               </div>
             </div>

@@ -1,7 +1,8 @@
 import { useState } from "react";
 import "./BulkUpload.css";
 
-const API_URL = "https://localhost:7042/api/Product/bulk-upload";
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://localhost:7000";
+const API_URL = `${BASE_URL}/api/Product/bulk-upload`;
 
 function BulkUpload() {
   const [file, setFile] = useState(null);

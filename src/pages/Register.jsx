@@ -2,7 +2,8 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import "./Auth.css";
 
-const API_URL = "https://localhost:7042/api/Auth";
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://localhost:7000";
+const API_URL = `${BASE_URL}/api/Auth`;
 
 function Register() {
   const [name, setName] = useState("");

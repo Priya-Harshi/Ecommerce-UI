@@ -2,14 +2,14 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./Payment.css";
 
-const PAYMENT_API = "https://localhost:7042/api/Payment";
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://localhost:7000";
+const PAYMENT_API = `${BASE_URL}/api/Payment`;
 
 function Payment() {
   const navigate = useNavigate();
 
   const [pendingOrder] = useState(() => {
     const savedOrder = localStorage.getItem("pendingOrder");
-
     return savedOrder ? JSON.parse(savedOrder) : null;
   });
 
@@ -25,28 +25,8 @@ function Payment() {
   useEffect(() => {
     if (!orderId) {
       setMessage("Order information not found.");
-      return;
     }
-
-    fetchPayment();
   }, [orderId]);
-
-  const fetchPayment = async () => {
-    try {
-      const response = await fetch(`${PAYMENT_API}/order/${orderId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setPayment(data);
-      }
-    } catch (error) {
-      console.log("Payment not found yet.");
-    }
-  };
 
   const processPayment = async () => {
     try {
@@ -61,19 +41,39 @@ function Payment() {
         },
         body: JSON.stringify({
           orderId: orderId,
+          amount: Number(totalAmount),
+          paymentMethod: "Mock",
         }),
       });
 
-      const data = await response.json();
+      const raw = await response.text();
 
-      if (!response.ok) {
-        throw new Error(data || "Payment failed.");
+      let data = null;
+      try {
+        data = raw ? JSON.parse(raw) : null;
+      } catch {
+        data = raw; // plain text error/success
       }
 
-      setPayment(data);
+      if (!response.ok) {
+        throw new Error(
+          typeof data === "string" ? data : data?.message || "Payment failed.",
+        );
+      }
+
+      if (typeof data === "object" && data !== null) {
+        setPayment(data);
+      } else {
+        setPayment({
+          id: "-",
+          orderId: orderId,
+          amount: Number(totalAmount),
+          status: "Paid",
+        });
+      }
+
       setMessage("Payment successful!");
 
-      // Clear temporary order and cart information
       localStorage.removeItem("pendingOrder");
       localStorage.removeItem("cart");
 
@@ -81,7 +81,7 @@ function Payment() {
         navigate("/orders");
       }, 1500);
     } catch (error) {
-      setMessage(error.message);
+      setMessage(error.message || "Payment failed.");
     } finally {
       setLoading(false);
     }
@@ -92,9 +92,7 @@ function Payment() {
       <div className="payment-page">
         <div className="payment-card">
           <h1>Payment</h1>
-
           <p className="error-message">Order information not found.</p>
-
           <Link to="/products" className="payment-button">
             Continue Shopping
           </Link>
@@ -108,9 +106,7 @@ function Payment() {
       <div className="payment-card">
         <div className="payment-header">
           <div className="payment-icon">💳</div>
-
           <h1>Payment</h1>
-
           <p>Complete your simulated payment.</p>
         </div>
 
@@ -130,13 +126,10 @@ function Payment() {
           <>
             <div className="payment-method">
               <h3>Payment Method</h3>
-
               <div className="payment-option">
                 <span className="radio-circle">✓</span>
-
                 <div>
                   <strong>Simulated Payment</strong>
-
                   <p>This is a simulated payment for demonstration.</p>
                 </div>
               </div>
@@ -155,9 +148,7 @@ function Payment() {
         {payment && (
           <div className="payment-success">
             <div className="success-icon">✓</div>
-
             <h2>Payment Successful!</h2>
-
             <p>Your payment has been completed successfully.</p>
 
             <div className="payment-details">
@@ -165,17 +156,14 @@ function Payment() {
                 <span>Payment ID</span>
                 <strong>#{payment.id}</strong>
               </p>
-
               <p>
                 <span>Order ID</span>
                 <strong>#{payment.orderId}</strong>
               </p>
-
               <p>
                 <span>Amount</span>
                 <strong>₹{payment.amount}</strong>
               </p>
-
               <p>
                 <span>Status</span>
                 <strong>{payment.status}</strong>

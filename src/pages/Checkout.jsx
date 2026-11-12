@@ -2,7 +2,8 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import "./Checkout.css";
 
-const ORDER_API = "https://localhost:7042/api/Order";
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://localhost:7000";
+const ORDER_API = `${BASE_URL}/api/Order`;
 
 function Checkout() {
   const [cart] = useState(() => {
@@ -42,12 +43,9 @@ function Checkout() {
         },
         body: JSON.stringify({
           userId: user.userId,
-          totalAmount: totalAmount,
-          status: "Pending",
-          orderItems: cart.map((item) => ({
+          items: cart.map((item) => ({
             productId: item.productId,
             quantity: item.quantity,
-            unitPrice: item.price,
           })),
         }),
       });

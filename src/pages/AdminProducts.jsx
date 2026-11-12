@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import "./AdminProducts.css";
 
-const API_URL = "https://localhost:7042/api/Product";
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://localhost:7000";
+const PRODUCT_API = `${BASE_URL}/api/Product`;
+const INVENTORY_API = `${BASE_URL}/api/Inventory`;
 
 function AdminProducts() {
   const [products, setProducts] = useState([]);
@@ -24,7 +26,7 @@ function AdminProducts() {
 
   const fetchProducts = async () => {
     try {
-      const response = await fetch(API_URL, {
+      const response = await fetch(PRODUCT_API, {
         headers: {
           Authorization: `Bearer ${getToken()}`,
         },
@@ -45,7 +47,7 @@ function AdminProducts() {
     e.preventDefault();
 
     try {
-      const response = await fetch(API_URL, {
+      const response = await fetch(PRODUCT_API, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -66,6 +68,29 @@ function AdminProducts() {
         throw new Error(error || "Failed to add product.");
       }
 
+      const createdProduct = await response.json();
+
+      // Create matching inventory entry
+      const inventoryResponse = await fetch(INVENTORY_API, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${getToken()}`,
+        },
+        body: JSON.stringify({
+          productId: createdProduct.id,
+          quantity: Number(stockQuantity),
+        }),
+      });
+
+      // If inventory already exists, continue without failing the product flow
+      if (!inventoryResponse.ok && inventoryResponse.status !== 409) {
+        const invError = await inventoryResponse.text();
+        throw new Error(
+          invError || "Product created, but failed to create inventory.",
+        );
+      }
+
       setMessage("Product added successfully.");
 
       clearForm();
@@ -79,7 +104,7 @@ function AdminProducts() {
     e.preventDefault();
 
     try {
-      const response = await fetch(`${API_URL}/${editingId}`, {
+      const response = await fetch(`${PRODUCT_API}/${editingId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -115,7 +140,7 @@ function AdminProducts() {
     }
 
     try {
-      const response = await fetch(`${API_URL}/${id}`, {
+      const response = await fetch(`${PRODUCT_API}/${id}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${getToken()}`,

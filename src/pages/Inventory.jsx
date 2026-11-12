@@ -1,7 +1,8 @@
 import { useState } from "react";
 import "./Inventory.css";
 
-const API_URL = "https://localhost:7042/api/Inventory";
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://localhost:7000";
+const API_URL = `${BASE_URL}/api/Inventory`;
 
 function Inventory() {
   const [productId, setProductId] = useState("");
